@@ -53,13 +53,6 @@ async def predict(file: UploadFile = File(...)):
         "image" : img_base64
     })
 
-    boxes = results[0].boxes.xyxy.tolist()
-    count = len(boxes)
-
-
-    return {
-        "detection" : boxes,
-        "count" : count
-    }
+    
 
 
