@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Microplastic Detection System</title>
+
+    <style>
+        body {
+            
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top, #0f172a, #020617);
+            color: white;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 40px;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        header span {
+            color: #00D4FF;
+        }
+
+        /* MAIN CENTER */
+        .main {
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin: 0;
+            background: linear-gradient(90deg, #ffffff, #00D4FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            margin-top: 10px;
+            opacity: 0.7;
+        }
+
+
+
+       .main-container {
+            display: flex;
+            height: 80vh;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+/* CENTER CARD */
+        .center-card {
+                width: 350px;
+                height: 200px;
+                border-radius: 20px;
+                background: rgba(255,255,255,0.05);
+                backdrop-filter: blur(15px);
+                border: 1px solid rgba(0,212,255,0.2);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+        .center-card:hover {
+            box-shadow: 0 0 25px rgba(0,212,255,0.3);
+        }
+
+        .plus {
+            font-size: 40px;
+            color: #00D4FF;
+        }
+
+        /* SIDE MENU */
+        .side-menu {
+            position: absolute;
+            top: 50%;
+            left: 60%;
+            transform: translateY(-50%);
+
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+
+            padding: 12px;
+            width: 220px;
+
+            border-radius: 16px;
+
+            /* 🔥 MAIN STYLE */
+            background: rgba(30, 41, 59, 0.6); /* bluish grey */
+            backdrop-filter: blur(20px);
+
+            border: 1px solid rgba(148, 163, 184, 0.2);
+
+            box-shadow: 
+                0 10px 30px rgba(0,0,0,0.4),
+                0 0 10px rgba(0,212,255,0.08);
+
+            z-index: 1000;
+        }
+
+        .side-menu button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 12px 14px;
+            border-radius: 10px;
+
+            background: transparent;
+            border: none;
+
+            color: #e2e8f0; /* soft white */
+            font-size: 14px;
+
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* HOVER (smooth like ChatGPT) */
+        .side-menu button:hover {
+            background: rgba(148, 163, 184, 0.12);
+        }
+
+        /* DIVIDER LINE */
+        .side-menu hr {
+            border: none;
+            height: 1px;
+            background: rgba(148, 163, 184, 0.15);
+            margin: 5px 0;
+        }
+
+        /* RESULT SECTION */
+        .result-section {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            text-align: center;
+        }
+
+        #outputImage {
+            max-width: 300px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 1px solid #00D4FF;
+        }
+
+        .more-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background: #00D4FF;
+            color: black;
+            cursor: pointer;
+        }
+        #countText {
+            margin-top: 10px;
+            color: #00D4FF;
+        }
+
+        /* GLOW EFFECT */
+        .glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0,212,255,0.2), transparent);
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            filter: blur(100px);
+            z-index: -1;
+        }
+
+            #particles {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -2;
+            }
+    
+    </style>
+</head>
+
+<body>
+
+    <input type="file" id="fileInput" style="display:none" accept="image/*">  /* image purpose */
+
+    <canvas id="particles"></canvas>
+
+<div class="glow"></div>
+
+<header>
+    <div>🧪 Microplastic <span>AI</span></div>
+    <div>Detection System</div>
+</header>
+
+<div class="main">
+
+    <h1>Detect Microplastics Instantly</h1>
+    <p>AI-powered analysis from microscope feed or uploaded images</p>
+
+    <div class="main-container">
+
+    <!-- CENTER CARD -->
+    <div class="center-card" onclick="toggleMenu(event)">
+        <div class="plus">+</div>
+        <p>Tap to proceed</p>
+    </div>
+
+    <!-- SIDE MENU -->
+    <div class="side-menu" id="menu">
+            <button onclick="uploadImage()">Add image</button>
+
+            <hr>
+
+            <button onclick="uploadImage()">Add video</button>
+            <button onclick="startLive()">Live detection</button>
+
+            <hr>
+
+            <button onclick="uploadFolder()">Batch analysis</button>
+    </div>
+
+    <!-- RESULT SECTION -->
+    <div class="result-section" id="resultSection">
+        <h2 id="resultText"></h2>
+        <img id="outputImage"/>
+        <button class="more-btn" onclick="showAnalytics()">More Results</button>
+    </div>
+
+</div>
+
+        <button class="stop-btn" id="stopBtn" onclick="stopLive()">⛔ Stop</button>
+
+    </div>
+        
+        <div>
+            <div id="countText"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// ===== MENU STATE =====
+let menuOpen = false;
+
+// TOGGLE MENU (clean open/close)
+function toggleMenu(event) {
+    event.stopPropagation();
+
+    const menu = document.getElementById("menu");
+
+    menuOpen = !menuOpen;
+    menu.style.display = menuOpen ? "flex" : "none";
+}
+
+document.getElementById("menu").addEventListener("click", function (event) {
+    event.stopPropagation();
+});
+
+// CLOSE MENU WHEN CLICKING OUTSIDE
+document.addEventListener("click", function () {
+    const menu = document.getElementById("menu");
+
+    if (menuOpen) {
+        menu.style.display = "none";
+        menuOpen = false;
+    }
+});
+
+// ===== LIVE CONTROL =====
+function startLive() {
+    document.getElementById("menu").style.display = "none";
+    menuOpen = false;
+
+    document.getElementById("stopBtn").style.display = "block";
+}
+
+function stopLive() {
+    document.getElementById("stopBtn").style.display = "none";
+}
+
+// ===== IMAGE / FOLDER =====
+function uploadImage() {
+    document.getElementById("fileInput").click();
+}
+
+function uploadFolder() {
+    simulateResult("Folder Processed");
+}
+
+// ===== RESULT CONTROL =====
+function simulateResult(text) {
+    document.getElementById("menu").style.display = "none";
+    menuOpen = false;
+
+    // show result section
+    document.getElementById("resultSection").style.display = "block";
+
+    // update text
+    document.getElementById("resultText").innerText =
+        text + " - Microplastics detected: 12";
+
+    // show MORE RESULTS button
+    document.querySelector(".more-btn").style.display = "inline-block";
+}
+
+// ===== API CALL (MAIN) =====
+
+        document.getElementById("fileInput").addEventListener("change", async function () {
+
+    const file = this.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const resultText = document.getElementById("resultText");
+
+    resultText.innerText = "Waking server... please wait ⏳";
+
+    try {
+
+        // 🔥 STEP 1: PING SERVER FIRST (wake it up)
+        await fetch("https://microplastic-api-bao1.onrender.com");
+
+        resultText.innerText = "Analyzing image...";
+
+        // 🔥 STEP 2: ACTUAL REQUEST
+        const response = await fetch("https://microplastic-api-bao1.onrender.com/predict", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        resultText.innerText = `Microplastics detected: ${data.count}`;
+
+        const img = document.getElementById("outputImage");
+        img.src = URL.createObjectURL(file);
+
+        document.querySelector(".more-btn").style.display = "inline-block";
+
+    } catch (error) {
+        resultText.innerText = "Server waking up... try again in few seconds";
+        console.error(error);
+    }
+
+});
+
+
+
+
+// ===== PARTICLE ANIMATION =====
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+
+        this.speedX = (Math.random() - 0.5) * 1;
+        this.speedY = (Math.random() - 0.5) * 1;
+
+        const colors = ["#00D4FF", "#00FFA3", "#FF4D6D"];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+        if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+
+        let centerX = canvas.width / 2;
+        let centerY = canvas.height / 2;
+
+        this.x += (centerX - this.x) * 0.0005;
+        this.y += (centerY - this.y) * 0.0005;
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = "#00D4FF";
+
+        ctx.fill();
+    }
+}
+
+for (let i = 0; i < 120; i++) {
+    particles.push(new Particle());
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+</script>
+
+</body>
+</html>
