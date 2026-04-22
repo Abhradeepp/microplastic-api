@@ -32,7 +32,8 @@ async def predict(file: UploadFile = File(...)):
 
     print("preprocessing received")
 
-    
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = cv2.convertScaleAbs(img, alpha=1.8, beta=40)
 
     kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
     img = cv2.filter2D(img, -1, kernel)
@@ -69,7 +70,8 @@ async def predict_image(file: UploadFile = File(...)):
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-  
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = cv2.convertScaleAbs(img, alpha=1.8, beta=40)
 
     kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
     img = cv2.filter2D(img, -1, kernel)
@@ -113,7 +115,8 @@ async def predict_multiple(files: list[UploadFile] = File(...)):
         nparr = np.frombuffer(contents, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-        
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.convertScaleAbs(img, alpha=1.8, beta=40)
 
         kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
         img = cv2.filter2D(img, -1, kernel)
