@@ -28,7 +28,7 @@
 
         /* MAIN CENTER */
         .main {
-            height: 80vh;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -53,7 +53,7 @@
 
        .main-container {
             display: flex;
-            height: 80vh;
+            height: 100vh;
             justify-content: center;
             align-items: center;
             position: relative;
@@ -173,6 +173,209 @@
             color: #00D4FF;
         }
 
+        /* ===== LOADING OVERLAY ===== */
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            pointer-events: all;
+        }
+
+        #loadingOverlay.active {
+            display: flex;
+        }
+
+        /* blurs the app content behind */
+        #app.loading-blur {
+            filter: blur(10px) brightness(0.6);
+            transition: filter 0.4s ease;
+        }
+
+        #sphereWrap {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* pulsing outer glow ring */
+        #sphereWrap::before {
+            content: '';
+            position: absolute;
+            inset: -18px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%);
+            animation: glowPulse 2.2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.5; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        #statusText {
+            margin-top: 28px;
+            font-size: 13px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(180, 225, 255, 0.75);
+            font-family: 'Segoe UI', sans-serif;
+            animation: textFade 0.5s ease;
+        }
+
+        @keyframes textFade {
+            from { opacity: 0; transform: translateY(4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== RESULT PAGE OVERLAY ===== */
+        #resultOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9500;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(160deg, #111214 0%, #1a1c20 40%, #0d0f12 100%);
+            animation: resultFadeIn 0.6s ease;
+        }
+
+        #resultOverlay.active {
+            display: flex;
+        }
+
+        @keyframes resultFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        .result-eyebrow {
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(0, 212, 255, 0.6);
+            margin-bottom: 10px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .result-headline {
+            font-size: 38px;
+            font-weight: 300;
+            letter-spacing: 0.04em;
+            color: #e8ecef;
+            margin: 0 0 6px 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .result-count-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 14px 0 28px;
+            padding: 9px 22px;
+            border-radius: 50px;
+            background: rgba(0,212,255,0.08);
+            border: 1px solid rgba(0,212,255,0.25);
+            font-size: 15px;
+            color: #00D4FF;
+            letter-spacing: 0.05em;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .result-count-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #00D4FF;
+            box-shadow: 0 0 8px #00D4FF;
+            animation: dotPulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        #resultImgWrap {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 0 60px rgba(0,0,0,0.6), 0 0 20px rgba(0,212,255,0.06);
+        }
+
+        #outputImage {
+            max-width: min(420px, 85vw);
+            display: block;
+            border-radius: 16px;
+            margin: 0;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .btn-primary {
+            padding: 11px 28px;
+            border-radius: 10px;
+            border: none;
+            background: #00D4FF;
+            color: #000;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.03em;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover { opacity: 0.85; }
+
+        .btn-ghost {
+            padding: 11px 28px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: transparent;
+            color: rgba(255,255,255,0.55);
+            font-size: 14px;
+            cursor: pointer;
+            letter-spacing: 0.03em;
+            transition: all 0.2s;
+        }
+
+        .btn-ghost:hover {
+            border-color: rgba(255,255,255,0.25);
+            color: rgba(255,255,255,0.85);
+        }
+
+        .blur-bg {
+            filter: blur(8px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /*stop button*/
+            .stop-btn {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 16px;
+        background: #ff4d6d;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        display: none;
+        cursor: pointer;
+    }
+
         /* GLOW EFFECT */
         .glow {
             position: absolute;
@@ -200,14 +403,18 @@
 
 <body>
 
-    <input type="file" id="fileInput" style="display:none" accept="image/*">  /* image purpose */
+<div id="app">
+   <!-- ALL YOUR UI -->
+
+
+    <input type="file" id="fileInput" style="display:none" accept="image/*" multiple> 
 
     <canvas id="particles"></canvas>
 
 <div class="glow"></div>
 
 <header>
-    <div>🧪 Microplastic <span>AI</span></div>
+    <div>Microplastic <span>AI</span></div>
     <div>Detection System</div>
 </header>
 
@@ -238,204 +445,329 @@
             <button onclick="uploadFolder()">Batch analysis</button>
     </div>
 
-    <!-- RESULT SECTION -->
-    <div class="result-section" id="resultSection">
-        <h2 id="resultText"></h2>
-        <img id="outputImage"/>
-        <button class="more-btn" onclick="showAnalytics()">More Results</button>
+    </div>
+
+        <button class="stop-btn" id="stopBtn" onclick="stopLive()">Stop</button>
+
     </div>
 
 </div>
 
-        <button class="stop-btn" id="stopBtn" onclick="stopLive()">⛔ Stop</button>
+</div>
 
+<!-- ===== LOADING OVERLAY (outside #app so blur on app works) ===== -->
+<div id="loadingOverlay">
+    <div id="sphereWrap">
+        <canvas id="sphere" width="220" height="220"></canvas>
     </div>
-        
-        <div>
-            <div id="countText"></div>
-        </div>
+    <div id="statusText">Initializing...</div>
+</div>
 
+<!-- ===== RESULT OVERLAY ===== -->
+<div id="resultOverlay">
+    <div class="result-eyebrow">Analysis complete</div>
+    <div class="result-headline">Microplastic Found</div>
+    <div class="result-count-badge">
+        <span class="result-count-dot"></span>
+        <span id="countText">0 particles detected</span>
     </div>
-
+    <div id="resultImgWrap">
+        <img id="outputImage" />
+    </div>
+    <div class="result-actions">
+        <button class="btn-primary" onclick="showAnalytics()">More Results</button>
+        <button class="btn-ghost" onclick="resetUI()">Scan again</button>
+    </div>
 </div>
 
 <script>
 
-// ===== MENU STATE =====
+// ===== MENU =====
 let menuOpen = false;
 
-// TOGGLE MENU (clean open/close)
 function toggleMenu(event) {
     event.stopPropagation();
-
     const menu = document.getElementById("menu");
-
     menuOpen = !menuOpen;
     menu.style.display = menuOpen ? "flex" : "none";
 }
 
-document.getElementById("menu").addEventListener("click", function (event) {
-    event.stopPropagation();
+document.getElementById("menu").addEventListener("click", e => e.stopPropagation());
+document.addEventListener("click", () => {
+    if (menuOpen) { document.getElementById("menu").style.display = "none"; menuOpen = false; }
 });
 
-// CLOSE MENU WHEN CLICKING OUTSIDE
-document.addEventListener("click", function () {
-    const menu = document.getElementById("menu");
-
-    if (menuOpen) {
-        menu.style.display = "none";
-        menuOpen = false;
-    }
-});
-
-// ===== LIVE CONTROL =====
-function startLive() {
-    document.getElementById("menu").style.display = "none";
-    menuOpen = false;
-
-    document.getElementById("stopBtn").style.display = "block";
-}
-
-function stopLive() {
-    document.getElementById("stopBtn").style.display = "none";
-}
-
-// ===== IMAGE / FOLDER =====
-function uploadImage() {
-    document.getElementById("fileInput").click();
-}
+function startLive() { document.getElementById("menu").style.display = "none"; menuOpen = false; document.getElementById("stopBtn").style.display = "block"; }
+function stopLive() { document.getElementById("stopBtn").style.display = "none"; }
+function uploadImage() { document.getElementById("fileInput").click(); }
 
 function uploadFolder() {
-    simulateResult("Folder Processed");
-}
-
-// ===== RESULT CONTROL =====
-function simulateResult(text) {
     document.getElementById("menu").style.display = "none";
     menuOpen = false;
 
-    // show result section
-    document.getElementById("resultSection").style.display = "block";
+    const input = document.getElementById("fileInput");
+    input.multiple = true;
 
-    // update text
-    document.getElementById("resultText").innerText =
-        text + " - Microplastics detected: 12";
+    
 
-    // show MORE RESULTS button
-    document.querySelector(".more-btn").style.display = "inline-block";
+    input.click();
 }
 
-// ===== API CALL (MAIN) =====
+function showAnalytics() { alert("Analytics panel coming soon."); }
+function resetUI() { document.getElementById("resultOverlay").classList.remove("active"); }
 
-        document.getElementById("fileInput").addEventListener("change", async function () {
+// ===== LOADING OVERLAY =====
+function showLoading() {
+    document.getElementById("app").style.filter = "blur(10px) brightness(0.55)";
+    document.getElementById("app").style.transition = "filter 0.4s ease";
+    document.getElementById("app").style.pointerEvents = "none";
+    document.getElementById("loadingOverlay").classList.add("active");
+}
 
-    const file = this.files[0];
-    if (!file) return;
+function hideLoading() {
+    document.getElementById("loadingOverlay").classList.remove("active");
+    document.getElementById("app").style.filter = "";
+    document.getElementById("app").style.pointerEvents = "";
+}
+
+// ===== RESULT OVERLAY =====
+function showResult(imageSrc, count) {
+    hideLoading();
+    document.getElementById("countText").textContent = count + " particle" + (count !== 1 ? "s" : "") + " detected";
+    const img = document.getElementById("outputImage");
+    const wrap = document.getElementById("resultImgWrap");
+    if (imageSrc) { img.src = imageSrc; img.style.display = "block"; wrap.style.display = "block"; }
+    else { img.style.display = "none"; wrap.style.display = "none"; }
+    document.getElementById("resultOverlay").classList.add("active");
+}
+
+// ===== STATUS CYCLE =====
+const statusMessages = ["Waking server\u2026","Analyzing sample\u2026","Detecting microplastics\u2026","Finalizing results\u2026"];
+let statusTimer = null;
+
+function cycleStatus() {
+    const el = document.getElementById("statusText");
+    let i = 0; el.textContent = statusMessages[0];
+    statusTimer = setInterval(() => {
+        i = (i + 1) % statusMessages.length;
+        el.style.animation = "none"; void el.offsetHeight; el.style.animation = "textFade 0.5s ease";
+        el.textContent = statusMessages[i];
+    }, 1800);
+}
+function stopStatusCycle() { if (statusTimer) { clearInterval(statusTimer); statusTimer = null; } }
+
+// ===== SERVER POLLING (handles Render.com cold start properly) =====
+const API = "https://microplastic-api-bao1.onrender.com";
+
+async function waitForServer(maxWait = 45000) {
+    const start = Date.now();
+    while (Date.now() - start < maxWait) {
+        try {
+            const r = await fetch(API + "/health", { signal: AbortSignal.timeout(5000) });
+            if (r.ok) {
+                // Extra warmup call so the YOLO model is loaded into memory
+                await fetch(API + "/warmup", { signal: AbortSignal.timeout(15000) }).catch(() => {});
+                return true;
+            }
+        } catch(e) {}
+        // Update status text to let user know we're waiting
+        const el = document.getElementById("statusText");
+        if (el) el.textContent = "Waking server… please wait";
+        await new Promise(r => setTimeout(r, 2500));
+    }
+    return false;
+}
+
+// ===== FILE INPUT =====
+document.getElementById("fileInput").addEventListener("change", async function () {
+    
+    const files = this.files;
+    if (!files || files.length === 0) return;
+
+    // 🚀 IF MULTIPLE → STOP THIS FLOW
+    if (files.length > 1) {
+        handleMultipleImages(files);
+        this.value = "";
+        return;}
+
+    const file = files[0];
+    
+    document.getElementById("menu").style.display = "none"; menuOpen = false;
+    showLoading(); cycleStatus();
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+    try {
+        
+        // Poll until server is truly ready (handles cold start up to 45s)
+        const ready = await waitForServer(45000);
+        if (!ready) {
+            stopStatusCycle(); hideLoading();
+            alert("Server is taking too long to start. Please try again in a moment.");
+            this.value = "";
+            return;
+        }
+
+        const response = await fetch(API + "/predict", { method: "POST", body: formData });
+        if (!response.ok) throw new Error("Server error: " + response.status);
+        const data = await response.json();
+        stopStatusCycle();
+        showResult("data:image/jpeg;base64," + data.image, data.count);
+    } catch (error) {
+        stopStatusCycle(); hideLoading();
+        alert("Detection failed: " + error.message + "\n\nCheck browser console for details.");
+        console.error(error);
+    }
+    this.value = "";
+});
+
+async function handleMultipleImages(files) {
+
+    showLoading();
+    cycleStatus();
 
     const formData = new FormData();
-    formData.append("file", file);
-
-    const resultText = document.getElementById("resultText");
-
-    resultText.innerText = "Waking server... please wait ⏳";
+    for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+    }
 
     try {
+        // Poll until server is truly ready
+        const ready = await waitForServer(45000);
+        if (!ready) {
+            stopStatusCycle(); hideLoading();
+            alert("Server is taking too long to start. Please try again.");
+            return;
+        }
 
-        // 🔥 STEP 1: PING SERVER FIRST (wake it up)
-        await fetch("https://microplastic-api-bao1.onrender.com");
-
-        resultText.innerText = "Analyzing image...";
-
-        // 🔥 STEP 2: ACTUAL REQUEST
-        const response = await fetch("https://microplastic-api-bao1.onrender.com/predict", {
+        const response = await fetch(API + "/predict-multiple", {
             method: "POST",
             body: formData
         });
 
+        if (!response.ok) throw new Error("Server error: " + response.status);
         const data = await response.json();
 
-        resultText.innerText = `Microplastics detected: ${data.count}`;
+        stopStatusCycle();
 
-        const img = document.getElementById("outputImage");
-        img.src = URL.createObjectURL(file);
-
-        document.querySelector(".more-btn").style.display = "inline-block";
+        let text = `Total: ${data.total} particles\n\n`;
+        data.counts_per_image.forEach((c, i) => {
+            text += `Image ${i + 1}: ${c}\n`;
+        });
+        document.getElementById("countText").innerText = text;
+        document.getElementById("resultImgWrap").style.display = "none";
+        showResult(null, data.total);
 
     } catch (error) {
-        resultText.innerText = "Server waking up... try again in few seconds";
+        stopStatusCycle();
+        hideLoading();
+        alert("Batch detection failed: " + error.message);
         console.error(error);
     }
+}
 
-});
+// ===== BACKGROUND PARTICLES =====
+const bgCanvas = document.getElementById("particles");
+const bgCtx = bgCanvas.getContext("2d");
+bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight;
+window.addEventListener("resize", () => { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; });
 
-
-
-
-// ===== PARTICLE ANIMATION =====
-
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let particles = [];
-
-class Particle {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 3 + 1;
-
-        this.speedX = (Math.random() - 0.5) * 1;
-        this.speedY = (Math.random() - 0.5) * 1;
-
-        const colors = ["#00D4FF", "#00FFA3", "#FF4D6D"];
-        this.color = colors[Math.floor(Math.random() * colors.length)];
+class BgParticle {
+    constructor() { this.reset(); }
+    reset() {
+        this.x = Math.random() * bgCanvas.width; this.y = Math.random() * bgCanvas.height;
+        this.size = Math.random() * 2.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.6; this.speedY = (Math.random() - 0.5) * 0.6;
+        this.color = ["#00D4FF","#00FFA3","#FF4D6D"][Math.floor(Math.random()*3)];
     }
-
     update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-
-        if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
-        if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
-
-        let centerX = canvas.width / 2;
-        let centerY = canvas.height / 2;
-
-        this.x += (centerX - this.x) * 0.0005;
-        this.y += (centerY - this.y) * 0.0005;
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.x > bgCanvas.width || this.x < 0) this.speedX *= -1;
+        if (this.y > bgCanvas.height || this.y < 0) this.speedY *= -1;
     }
-
     draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = "#00D4FF";
-
-        ctx.fill();
+        bgCtx.beginPath(); bgCtx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+        bgCtx.fillStyle = this.color; bgCtx.shadowBlur = 12; bgCtx.shadowColor = "#00D4FF"; bgCtx.fill();
     }
 }
+const bgParticles = Array.from({length:100}, () => new BgParticle());
+(function animateBg() { bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height); bgParticles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animateBg); })();
 
-for (let i = 0; i < 120; i++) {
-    particles.push(new Particle());
+// ===== PREMIUM 3D SPHERE =====
+const SC = document.getElementById("sphere");
+const sCtx = SC.getContext("2d");
+const SW = 220, SH = 220, CX = SW/2, CY = SH/2;
+
+function drawCore() {
+    for (let r = 56; r >= 24; r -= 5) {
+        const a = 0.035 + (56-r)*0.008;
+        sCtx.beginPath(); sCtx.arc(CX, CY, r, 0, Math.PI*2);
+        sCtx.fillStyle = "rgba(0,212,255,"+a.toFixed(3)+")"; sCtx.fill();
+    }
+    const g = sCtx.createRadialGradient(CX-7, CY-7, 2, CX, CY, 24);
+    g.addColorStop(0, "rgba(190,245,255,0.98)");
+    g.addColorStop(0.35, "rgba(0,212,255,0.9)");
+    g.addColorStop(1, "rgba(0,70,150,0.35)");
+    sCtx.beginPath(); sCtx.arc(CX, CY, 24, 0, Math.PI*2);
+    sCtx.fillStyle = g; sCtx.fill();
+    sCtx.beginPath(); sCtx.arc(CX-8, CY-8, 7, 0, Math.PI*2);
+    sCtx.fillStyle = "rgba(255,255,255,0.5)"; sCtx.fill();
 }
 
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+const orbitDefs = [
+    { rx:80, ry:22, tilt:0,   count:5, speed:0.008,  hue:195 },
+    { rx:70, ry:28, tilt:55,  count:4, speed:-0.006, hue:168 },
+    { rx:84, ry:18, tilt:-38, count:3, speed:0.011,  hue:212 },
+];
+const orbitParts = orbitDefs.map(o =>
+    Array.from({length:o.count}, (_,i) => ({ phase:(i/o.count)*Math.PI*2, size:2+Math.random()*2 }))
+);
 
-    particles.forEach(p => {
-        p.update();
-        p.draw();
+function drawOrbits(t) {
+    orbitDefs.forEach((o, oi) => {
+        const cT = Math.cos(o.tilt*Math.PI/180), sT = Math.sin(o.tilt*Math.PI/180);
+        orbitParts[oi].forEach(p => {
+            const a = p.phase + t * o.speed * 60;
+            const lx = o.rx*Math.cos(a), ly = o.ry*Math.sin(a);
+            const rx2 = lx*cT - ly*sT, ry2 = lx*sT + ly*cT;
+            const px = CX+rx2, py = CY+ry2;
+            const da = 0.3 + 0.7*((ry2/o.rx)*0.5+0.5);
+            sCtx.beginPath(); sCtx.arc(px, py, p.size, 0, Math.PI*2);
+            sCtx.fillStyle = "hsla("+o.hue+",100%,72%,"+da.toFixed(2)+")";
+            sCtx.shadowBlur = 10; sCtx.shadowColor = "hsl("+o.hue+",100%,72%)"; sCtx.fill(); sCtx.shadowBlur = 0;
+        });
     });
-
-    requestAnimationFrame(animate);
 }
 
-animate();
+const strays = Array.from({length:10}, () => ({
+    angle: Math.random()*Math.PI*2,
+    dist: 60+Math.random()*26,
+    drift: (Math.random()-0.5)*0.004,
+    driftD: (Math.random()-0.5)*0.08,
+    size: 1.2+Math.random()*1.4,
+    hue: 185+Math.random()*40,
+    alpha: 0.35+Math.random()*0.4,
+}));
+
+function drawStrays() {
+    strays.forEach(s => {
+        s.angle += s.drift; s.dist += s.driftD;
+        if (s.dist > 96 || s.dist < 54) s.driftD *= -1;
+        const px = CX+s.dist*Math.cos(s.angle), py = CY+s.dist*Math.sin(s.angle);
+        sCtx.beginPath(); sCtx.arc(px, py, s.size, 0, Math.PI*2);
+        sCtx.fillStyle = "hsla("+s.hue+",90%,75%,"+s.alpha+")";
+        sCtx.shadowBlur = 8; sCtx.shadowColor = "hsl("+s.hue+",90%,70%)"; sCtx.fill(); sCtx.shadowBlur = 0;
+    });
+}
+
+let rot = 0;
+(function animateSphere() {
+    rot += 0.01;
+    sCtx.clearRect(0, 0, SW, SH);
+    drawOrbits(rot);
+    drawStrays();
+    drawCore();
+    requestAnimationFrame(animateSphere);
+})();
 
 </script>
 
