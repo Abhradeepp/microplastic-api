@@ -30,7 +30,15 @@ async def predict(file: UploadFile = File(...)):
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    results = model(img, conf=0.25)
+    print("preprocessing received")
+
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = cv2.convertScaleAbs(img, alpha=1.8, beta=40)
+
+    kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
+    img = cv2.filter2D(img, -1, kernel)
+
+    results = model(img, conf=0.15, iou=0.5, imgsz=416)
 
     count = len(results[0].boxes) if results[0].boxes is not None else 0
 
@@ -38,10 +46,20 @@ async def predict(file: UploadFile = File(...)):
     _, buffer = cv2.imencode(".jpg", annotated)
     img_base64 = base64.b64encode(buffer).decode("utf-8")
 
+    print("🔥 REQUEST RECEIVED")
+
+    # Save raw image
+    with open("debug_upload.jpg", "wb") as f:
+        f.write(contents)
+
+    print("🔥 FILE SIZE:", len(contents))
+
     return {
         "count": count,
         "image": img_base64
     }
+
+    
 
 from fastapi.responses import Response
 
@@ -52,12 +70,82 @@ async def predict_image(file: UploadFile = File(...)):
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    results = model(img, conf=0.25)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = cv2.convertScaleAbs(img, alpha=1.8, beta=40)
 
+    kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
+    img = cv2.filter2D(img, -1, kernel)
+
+    results = model(img, conf=0.15, iou=0.5, imgsz=416)
     annotated = results[0].plot()
     _, buffer = cv2.imencode(".jpg", annotated)
 
     return Response(content=buffer.tobytes(), media_type="image/jpeg")
+
+@app.get("/health")
+def health():
+    return {"status": "ready"}
+
+@app.get("/warmup")
+def warmup():
+    """Run a dummy inference to pre-load the YOLO model into memory.
+    Called by the frontend after /health confirms the server is up."""
+    try:
+        dummy = np.zeros((416, 416, 3), dtype=np.uint8)
+        model(dummy, imgsz=416, verbose=False)
+        return {"status": "warmed_up"}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
+
+#for multiple images 
+
+
+from typing import List
+from fastapi import UploadFile, File
+
+@app.post("/predict-multiple")
+async def predict_multiple(files: list[UploadFile] = File(...)):
+
+    counts = []
+    total = 0
+
+    for file in files:
+        contents = await file.read()
+
+        nparr = np.frombuffer(contents, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.convertScaleAbs(img, alpha=1.8, beta=40)
+
+        kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
+        img = cv2.filter2D(img, -1, kernel)
+
+        results = model(img, conf=0.15, iou=0.5, imgsz=416)
+
+        if results[0].boxes is not None:
+            count = len(results[0].boxes)
+        else:
+            count = 0
+
+        counts.append(count)
+        total += count
+
+
+    # 🔥 BASIC STATS
+    num_images = len(counts)
+    avg = total / num_images if num_images > 0 else 0
+    max_count = max(counts) if counts else 0
+    min_count = min(counts) if counts else 0
+
+    return {
+        "counts_per_image": counts,
+        "total": total,
+        "num_images": num_images,
+        "average": avg,
+        "max": max_count,
+        "min": min_count
+    }
 
     
 
