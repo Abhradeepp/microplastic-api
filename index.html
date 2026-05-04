@@ -13,173 +13,311 @@
             overflow: hidden;
         }
 
+        /* ── HEADER ── */
         header {
-            display: flex; justify-content: space-between;
-            padding: 20px 40px; font-size: 18px; opacity: 0.9;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 40px;
+            font-size: 18px;
+            opacity: 0.9;
         }
         header span { color: #00D4FF; }
 
+        /* ── MAIN ── */
         .main {
-            height: 100vh; display: flex; align-items: center;
-            justify-content: center; flex-direction: column; text-align: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
         }
 
         h1 {
-            font-size: 42px; margin: 0;
+            font-size: 42px;
+            margin: 0;
             background: linear-gradient(90deg, #ffffff, #00D4FF);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         p { margin-top: 10px; opacity: 0.7; }
 
         .main-container {
-            display: flex; height: 100vh; justify-content: center;
-            align-items: center; position: relative;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
 
+        /* ── CENTER CARD ── */
         .center-card {
-            width: 350px; height: 200px; border-radius: 20px;
-            background: rgba(255,255,255,0.05); backdrop-filter: blur(15px);
-            border: 1px solid rgba(0,212,255,0.2); display: flex;
-            flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s;
+            width: 350px;
+            height: 200px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0,212,255,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
         }
         .center-card:hover { box-shadow: 0 0 25px rgba(0,212,255,0.3); }
         .plus { font-size: 40px; color: #00D4FF; }
 
+        /* ── SIDE MENU ── */
         .side-menu {
-            position: absolute; top: 50%; left: 60%; transform: translateY(-50%);
-            display: none; flex-direction: column; gap: 6px; padding: 12px;
-            width: 220px; border-radius: 16px; background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(20px); border: 1px solid rgba(148, 163, 184, 0.2);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 10px rgba(0,212,255,0.08); z-index: 1000;
+            position: absolute;
+            top: 50%; left: 60%;
+            transform: translateY(-50%);
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            padding: 12px;
+            width: 220px;
+            border-radius: 16px;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 0 10px rgba(0,212,255,0.08);
+            z-index: 1000;
         }
         .side-menu button {
-            display: flex; align-items: center; gap: 10px; padding: 12px 14px;
-            border-radius: 10px; background: transparent; border: none;
-            color: #e2e8f0; font-size: 14px; cursor: pointer; transition: all 0.2s ease;
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 14px; border-radius: 10px;
+            background: transparent; border: none;
+            color: #e2e8f0; font-size: 14px;
+            cursor: pointer; transition: all 0.2s ease;
         }
         .side-menu button:hover { background: rgba(148, 163, 184, 0.12); }
         .side-menu hr { border: none; height: 1px; background: rgba(148,163,184,0.15); margin: 5px 0; }
 
+        /* ── LOADING OVERLAY ── */
         #loadingOverlay {
-            position: fixed; inset: 0; z-index: 9000; display: none;
-            align-items: center; justify-content: center; flex-direction: column;
+            position: fixed; inset: 0; z-index: 9000;
+            display: none; align-items: center; justify-content: center;
+            flex-direction: column; pointer-events: all;
         }
         #loadingOverlay.active { display: flex; }
         #app.loading-blur { filter: blur(10px) brightness(0.6); transition: filter 0.4s ease; }
 
-        #sphereWrap { position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; }
+        #sphereWrap {
+            position: relative; width: 220px; height: 220px;
+            display: flex; align-items: center; justify-content: center;
+        }
         #sphereWrap::before {
             content: ''; position: absolute; inset: -18px; border-radius: 50%;
             background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%);
             animation: glowPulse 2.2s ease-in-out infinite;
         }
-        @keyframes glowPulse { 0%, 100% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } }
-        
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.5; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
         #statusText {
             margin-top: 28px; font-size: 13px; letter-spacing: 0.18em;
             text-transform: uppercase; color: rgba(180,225,255,0.75);
+            animation: textFade 0.5s ease;
+        }
+        @keyframes textFade {
+            from { opacity: 0; transform: translateY(4px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
+        /* ── SINGLE-IMAGE RESULT OVERLAY ── */
         #resultOverlay {
-            position: fixed; inset: 0; z-index: 9500; display: none;
-            flex-direction: column; align-items: center; justify-content: center;
+            position: fixed; inset: 0; z-index: 9500;
+            display: none; flex-direction: column;
+            align-items: center; justify-content: center;
             background: linear-gradient(160deg, #111214 0%, #1a1c20 40%, #0d0f12 100%);
+            animation: resultFadeIn 0.6s ease;
         }
         #resultOverlay.active { display: flex; }
+        @keyframes resultFadeIn { from { opacity:0; } to { opacity:1; } }
 
-        .result-eyebrow { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(0,212,255,0.6); margin-bottom: 10px; }
-        .result-headline { font-size: 38px; font-weight: 300; color: #e8ecef; margin: 0 0 6px; }
-        .result-count-badge {
-            display: inline-flex; align-items: center; gap: 8px; margin: 14px 0 28px;
-            padding: 9px 22px; border-radius: 50px; background: rgba(0,212,255,0.08);
-            border: 1px solid rgba(0,212,255,0.25); font-size: 15px; color: #00D4FF;
+        .result-eyebrow {
+            font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+            color: rgba(0,212,255,0.6); margin-bottom: 10px;
         }
-        .result-count-dot { width: 7px; height: 7px; border-radius: 50%; background: #00D4FF; box-shadow: 0 0 8px #00D4FF; }
-        
-        /* Fixed Image Wrapper */
+        .result-headline { font-size: 38px; font-weight: 300; letter-spacing: 0.04em; color: #e8ecef; margin: 0 0 6px; }
+        .result-count-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            margin: 14px 0 28px; padding: 9px 22px; border-radius: 50px;
+            background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.25);
+            font-size: 15px; color: #00D4FF; letter-spacing: 0.05em;
+        }
+        .result-count-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #00D4FF; box-shadow: 0 0 8px #00D4FF;
+            animation: dotPulse 1.8s ease-in-out infinite;
+        }
+        @keyframes dotPulse {
+            0%, 100% { opacity:1; transform:scale(1); }
+            50% { opacity:0.4; transform:scale(0.7); }
+        }
         #resultImgWrap {
             position: relative; border-radius: 16px; overflow: hidden;
             border: 1px solid rgba(255,255,255,0.08);
             box-shadow: 0 0 60px rgba(0,0,0,0.6), 0 0 20px rgba(0,212,255,0.06);
-            margin-bottom: 20px;
-            min-height: 200px; /* Forces wrap to show even if img is slow */
-            display: flex; justify-content: center; align-items: center;
         }
-        #outputImage { 
-            max-width: min(420px, 85vw); max-height: 50vh; 
-            display: block; border-radius: 16px; object-fit: contain;
-        }
-
-        .result-actions { display: flex; gap: 12px; margin-top: 10px; }
+        #outputImage { max-width: min(420px, 85vw); display: block; border-radius: 16px; }
+        .result-actions { display: flex; gap: 12px; margin-top: 28px; }
 
         .btn-primary {
             padding: 11px 28px; border-radius: 10px; border: none;
-            background: #00D4FF; color: #000; font-size: 14px; font-weight: 600; cursor: pointer;
+            background: #00D4FF; color: #000; font-size: 14px; font-weight: 600;
+            cursor: pointer; letter-spacing: 0.03em; transition: opacity 0.2s;
         }
+        .btn-primary:hover { opacity: 0.85; }
         .btn-ghost {
-            padding: 11px 28px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12);
-            background: transparent; color: rgba(255,255,255,0.55); font-size: 14px; cursor: pointer;
+            padding: 11px 28px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: transparent; color: rgba(255,255,255,0.55);
+            font-size: 14px; cursor: pointer; letter-spacing: 0.03em; transition: all 0.2s;
         }
         .btn-ghost:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.85); }
 
+        /* ── BATCH RESULT OVERLAY ── */
         #batchOverlay {
-            position: fixed; inset: 0; z-index: 9500; display: none; flex-direction: column;
+            position: fixed; inset: 0; z-index: 9500;
+            display: none; flex-direction: column;
             background: linear-gradient(160deg, #0b0e14 0%, #111520 50%, #090c10 100%);
+            animation: resultFadeIn 0.5s ease;
+            overflow: hidden;
         }
         #batchOverlay.active { display: flex; }
 
         .batch-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 24px 36px 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 24px 36px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            flex-shrink: 0;
         }
         .batch-title-group { display: flex; flex-direction: column; gap: 4px; }
         .batch-eyebrow { font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(0,212,255,0.5); }
         .batch-headline { font-size: 22px; font-weight: 300; color: #e8ecef; }
 
-        .batch-stats-row { display: flex; gap: 16px; padding: 16px 36px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .batch-stats-row {
+            display: flex; gap: 16px;
+            padding: 16px 36px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
+        }
         .stat-pill {
-            display: flex; flex-direction: column; align-items: center; padding: 10px 20px;
-            border-radius: 12px; background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.14); min-width: 90px;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 10px 20px; border-radius: 12px;
+            background: rgba(0,212,255,0.06);
+            border: 1px solid rgba(0,212,255,0.14);
+            min-width: 90px;
         }
         .stat-pill .val { font-size: 22px; font-weight: 600; color: #00D4FF; }
         .stat-pill .lbl { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-top: 2px; }
 
-        .batch-tabs { display: flex; gap: 0; padding: 0 36px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+        /* TAB BAR */
+        .batch-tabs {
+            display: flex; gap: 0;
+            padding: 0 36px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            flex-shrink: 0;
+        }
         .tab-btn {
-            padding: 12px 24px; font-size: 13px; letter-spacing: 0.05em; background: transparent;
-            border: none; color: rgba(255,255,255,0.4); cursor: pointer; border-bottom: 2px solid transparent;
+            padding: 12px 24px; font-size: 13px; letter-spacing: 0.05em;
+            background: transparent; border: none; color: rgba(255,255,255,0.4);
+            cursor: pointer; border-bottom: 2px solid transparent;
+            transition: all 0.2s; margin-bottom: -1px;
         }
         .tab-btn.active { color: #00D4FF; border-bottom-color: #00D4FF; }
+        .tab-btn:hover:not(.active) { color: rgba(255,255,255,0.7); }
 
-        .batch-body { flex: 1; overflow-y: auto; padding: 24px 36px; }
+        .batch-body {
+            flex: 1; overflow-y: auto; padding: 24px 36px;
+        }
+        .batch-body::-webkit-scrollbar { width: 4px; }
+        .batch-body::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.2); border-radius: 2px; }
+
+        /* IMAGE GRID TAB */
         #tabImages { display: block; }
-        #tabChart { display: none; }
+        #tabChart  { display: none; }
 
-        .img-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+        .img-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
         .img-card {
-            border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);
-            background: rgba(255,255,255,0.03); cursor: pointer;
+            border-radius: 14px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .img-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 12px rgba(0,212,255,0.1);
         }
         .img-card img { width: 100%; display: block; }
-        .img-card-footer { padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
-        .img-fname { font-size: 11px; color: rgba(255,255,255,0.45); overflow: hidden; text-overflow: ellipsis; }
-        .img-badge { font-size: 11px; color: #00D4FF; background: rgba(0,212,255,0.1); padding: 2px 8px; border-radius: 20px; }
+        .img-card-footer {
+            padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .img-fname { font-size: 11px; color: rgba(255,255,255,0.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+        .img-badge {
+            font-size: 11px; font-weight: 700; color: #00D4FF;
+            background: rgba(0,212,255,0.1); padding: 2px 8px; border-radius: 20px;
+            border: 1px solid rgba(0,212,255,0.2);
+        }
 
-        .chart-wrap { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+        /* CHART TAB */
+        .chart-wrap {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; padding: 24px;
+            margin-bottom: 20px;
+        }
         .chart-label { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 16px; }
-        .chart-canvas-wrap { position: relative; height: 300px; }
+        .chart-canvas-wrap { position: relative; height: 220px; }
 
+        /* LIGHTBOX */
         #lightbox {
-            position: fixed; inset: 0; z-index: 10000; display: none; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.88); backdrop-filter: blur(8px);
+            position: fixed; inset: 0; z-index: 10000;
+            display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(8px);
         }
         #lightbox.active { display: flex; }
-        #lightbox img { max-width: 90vw; max-height: 88vh; border-radius: 12px; border: 1px solid rgba(0,212,255,0.2); }
-        .lightbox-close { position: absolute; top: 20px; right: 26px; font-size: 28px; color: rgba(255,255,255,0.5); cursor: pointer; }
+        #lightbox img {
+            max-width: 90vw; max-height: 88vh;
+            border-radius: 12px;
+            border: 1px solid rgba(0,212,255,0.2);
+            box-shadow: 0 0 60px rgba(0,0,0,0.8);
+        }
+        .lightbox-close {
+            position: absolute; top: 20px; right: 26px;
+            font-size: 28px; color: rgba(255,255,255,0.5);
+            cursor: pointer; transition: color 0.2s;
+        }
+        .lightbox-close:hover { color: #fff; }
 
-        .glow { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,212,255,0.2), transparent); top: 20%; left: 50%; transform: translateX(-50%); filter: blur(100px); z-index: -1; }
-        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
+        /* MISC */
+        .stop-btn {
+            position: absolute; bottom: 20px; right: 20px;
+            padding: 10px 16px; background: #ff4d6d;
+            border: none; border-radius: 8px; color: white;
+            display: none; cursor: pointer;
+        }
+        .glow {
+            position: absolute; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(0,212,255,0.2), transparent);
+            top: 20%; left: 50%; transform: translateX(-50%);
+            filter: blur(100px); z-index: -1;
+        }
+        #particles {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; z-index: -2;
+        }
     </style>
 </head>
 <body>
@@ -207,15 +345,23 @@
             <div class="side-menu" id="menu">
                 <button onclick="uploadImage()">Add image</button>
                 <hr>
+                <button onclick="uploadImage()">Add video</button>
+                <button onclick="startLive()">Live detection</button>
+                <hr>
                 <button onclick="uploadFolder()">Batch analysis</button>
             </div>
         </div>
+
+        <button class="stop-btn" id="stopBtn" onclick="stopLive()">Stop</button>
     </div>
 </div>
 
+<!-- LOADING -->
 <div id="loadingOverlay">
-    <div id="sphereWrap"><canvas id="sphere" width="220" height="220"></canvas></div>
-    <div id="statusText">Analyzing sample…</div>
+    <div id="sphereWrap">
+        <canvas id="sphere" width="220" height="220"></canvas>
+    </div>
+    <div id="statusText">Initializing...</div>
 </div>
 
 <!-- SINGLE IMAGE RESULT -->
@@ -226,19 +372,15 @@
         <span class="result-count-dot"></span>
         <span id="countText">0 particles detected</span>
     </div>
-    
     <div id="resultImgWrap">
         <img id="outputImage" />
     </div>
-    
     <div class="result-actions">
-        <!-- New "More Results" button to trigger charts -->
-        <button class="btn-primary" onclick="openMoreResults()">More Results</button>
         <button class="btn-ghost" onclick="resetUI()">Scan again</button>
     </div>
 </div>
 
-<!-- BATCH / ANALYTICS OVERLAY -->
+<!-- BATCH RESULT OVERLAY -->
 <div id="batchOverlay">
     <div class="batch-header">
         <div class="batch-title-group">
@@ -261,89 +403,131 @@
         </div>
         <div id="tabChart">
             <div class="chart-wrap">
-                <div class="chart-label">Particle Distribution (Size vs Density)</div>
-                <div class="chart-canvas-wrap"><canvas id="scatterChart"></canvas></div>
+                <div class="chart-label">Particles per image</div>
+                <div class="chart-canvas-wrap"><canvas id="barChart"></canvas></div>
             </div>
             <div class="chart-wrap">
-                <div class="chart-label">Particles per image</div>
-                <div class="chart-canvas-wrap" style="height: 220px;"><canvas id="barChart"></canvas></div>
+                <div class="chart-label">Distribution overview</div>
+                <div class="chart-canvas-wrap"><canvas id="doughnutChart"></canvas></div>
             </div>
         </div>
     </div>
 </div>
 
-<div id="lightbox" onclick="closeLightbox()"><span class="lightbox-close">✕</span><img id="lightboxImg" /></div>
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close" onclick="closeLightbox()">✕</span>
+    <img id="lightboxImg" />
+</div>
 
 <script>
+// ── GLOBALS ──────────────────────────────────────────────────────────────────
 const API = "https://microplastic-api-bao1.onrender.com";
 let menuOpen = false;
-let barChartInst = null, scatterChartInst = null;
+let barChartInst = null, doughnutChartInst = null;
 let currentBatchData = null;
 
+// ── MENU ─────────────────────────────────────────────────────────────────────
 function toggleMenu(e) {
     e.stopPropagation();
+    const menu = document.getElementById("menu");
     menuOpen = !menuOpen;
-    document.getElementById("menu").style.display = menuOpen ? "flex" : "none";
+    menu.style.display = menuOpen ? "flex" : "none";
 }
+document.getElementById("menu").addEventListener("click", e => e.stopPropagation());
 document.addEventListener("click", () => {
     if (menuOpen) { document.getElementById("menu").style.display = "none"; menuOpen = false; }
 });
 
-function uploadImage() { document.getElementById("fileInput").multiple = false; document.getElementById("fileInput").click(); }
-function uploadFolder() { document.getElementById("fileInput").multiple = true; document.getElementById("fileInput").click(); }
+function startLive() { document.getElementById("menu").style.display = "none"; menuOpen = false; document.getElementById("stopBtn").style.display = "block"; }
+function stopLive()  { document.getElementById("stopBtn").style.display = "none"; }
+function uploadImage() { document.getElementById("fileInput").click(); }
+function uploadFolder() {
+    document.getElementById("menu").style.display = "none"; menuOpen = false;
+    const input = document.getElementById("fileInput");
+    input.multiple = true;
+    input.click();
+}
 
+// ── RESET ─────────────────────────────────────────────────────────────────────
 function resetUI() {
     document.getElementById("resultOverlay").classList.remove("active");
     document.getElementById("batchOverlay").classList.remove("active");
     currentBatchData = null;
 }
 
-function showLoading() { document.getElementById("loadingOverlay").classList.add("active"); }
-function hideLoading() { document.getElementById("loadingOverlay").classList.remove("active"); }
-
-function openMoreResults() {
-    // Hide single result view and push single image data into the batch view structure
-    document.getElementById("resultOverlay").classList.remove("active");
-    switchTab("chart");
-    document.getElementById("batchOverlay").classList.add("active");
+// ── LOADING ───────────────────────────────────────────────────────────────────
+function showLoading() {
+    document.getElementById("app").style.filter = "blur(10px) brightness(0.55)";
+    document.getElementById("app").style.transition = "filter 0.4s ease";
+    document.getElementById("app").style.pointerEvents = "none";
+    document.getElementById("loadingOverlay").classList.add("active");
+}
+function hideLoading() {
+    document.getElementById("loadingOverlay").classList.remove("active");
+    document.getElementById("app").style.filter = "";
+    document.getElementById("app").style.pointerEvents = "";
 }
 
-function showResult(imageSrc, count, stats) {
+// ── STATUS CYCLE ──────────────────────────────────────────────────────────────
+const statusMessages = ["Waking server…","Analyzing sample…","Detecting microplastics…","Finalizing results…"];
+let statusTimer = null;
+function cycleStatus() {
+    const el = document.getElementById("statusText");
+    let i = 0; el.textContent = statusMessages[0];
+    statusTimer = setInterval(() => {
+        i = (i + 1) % statusMessages.length;
+        el.style.animation = "none"; void el.offsetHeight; el.style.animation = "textFade 0.5s ease";
+        el.textContent = statusMessages[i];
+    }, 1800);
+}
+function stopStatusCycle() { if (statusTimer) { clearInterval(statusTimer); statusTimer = null; } }
+
+// ── SERVER POLLING ─────────────────────────────────────────────────────────────
+async function waitForServer(maxWait = 45000) {
+    const start = Date.now();
+    while (Date.now() - start < maxWait) {
+        try {
+            const r = await fetch(API + "/health", { signal: AbortSignal.timeout(5000) });
+            if (r.ok) {
+                await fetch(API + "/warmup", { signal: AbortSignal.timeout(15000) }).catch(() => {});
+                return true;
+            }
+        } catch(e) {}
+        const el = document.getElementById("statusText");
+        if (el) el.textContent = "Waking server… please wait";
+        await new Promise(r => setTimeout(r, 2500));
+    }
+    return false;
+}
+
+// ── SINGLE IMAGE RESULT ───────────────────────────────────────────────────────
+function showResult(imageSrc, count) {
     hideLoading();
     document.getElementById("countText").textContent = count + " particle" + (count !== 1 ? "s" : "") + " detected";
-    
-    // Explicitly set the image source and display it
     const img = document.getElementById("outputImage");
-    img.src = imageSrc;
-    
-    // Package single result as a 'batch' so "More Results" analytics works
-    currentBatchData = {
-        total: count, num_images: 1, average: count, max: count, min: count,
-        images: [imageSrc.split(',')[1]], filenames: ["Analyzed Image"],
-        counts_per_image: [count], particle_stats: stats || []
-    };
-    
-    populateBatchData(currentBatchData);
+    const wrap = document.getElementById("resultImgWrap");
+    if (imageSrc) { img.src = imageSrc; img.style.display = "block"; wrap.style.display = "block"; }
+    else { img.style.display = "none"; wrap.style.display = "none"; }
     document.getElementById("resultOverlay").classList.add("active");
 }
 
+// ── BATCH RESULT ──────────────────────────────────────────────────────────────
 function showBatchResult(data) {
     hideLoading();
     currentBatchData = data;
-    populateBatchData(data);
-    switchTab("images");
-    document.getElementById("batchOverlay").classList.add("active");
-}
 
-function populateBatchData(data) {
+    // Stats row
     const statsEl = document.getElementById("batchStats");
     statsEl.innerHTML = `
         <div class="stat-pill"><div class="val">${data.total}</div><div class="lbl">Total</div></div>
         <div class="stat-pill"><div class="val">${data.num_images}</div><div class="lbl">Images</div></div>
-        <div class="stat-pill"><div class="val">${data.average}</div><div class="lbl">Avg/Img</div></div>
+        <div class="stat-pill"><div class="val">${data.average}</div><div class="lbl">Average</div></div>
         <div class="stat-pill"><div class="val">${data.max}</div><div class="lbl">Max</div></div>
+        <div class="stat-pill"><div class="val">${data.min}</div><div class="lbl">Min</div></div>
     `;
 
+    // Image grid
     const grid = document.getElementById("imgGrid");
     grid.innerHTML = "";
     data.images.forEach((b64, i) => {
@@ -352,12 +536,24 @@ function populateBatchData(data) {
         const count = data.counts_per_image[i];
         const card = document.createElement("div");
         card.className = "img-card";
-        card.innerHTML = `<img src="${src}" /><div class="img-card-footer"><span class="img-fname">${fname}</span><span class="img-badge">${count} pts</span></div>`;
+        card.innerHTML = `
+            <img src="${src}" alt="${fname}" loading="lazy" />
+            <div class="img-card-footer">
+                <span class="img-fname">${fname}</span>
+                <span class="img-badge">${count} pt${count !== 1 ? 's' : ''}</span>
+            </div>
+        `;
         card.querySelector("img").addEventListener("click", () => openLightbox(src));
         grid.appendChild(card);
     });
+
+    // Reset to images tab
+    switchTab("images");
+
+    document.getElementById("batchOverlay").classList.add("active");
 }
 
+// ── TABS ──────────────────────────────────────────────────────────────────────
 function switchTab(tab) {
     document.getElementById("tabImages").style.display = tab === "images" ? "block" : "none";
     document.getElementById("tabChart").style.display  = tab === "chart"  ? "block" : "none";
@@ -366,51 +562,11 @@ function switchTab(tab) {
     if (tab === "chart" && currentBatchData) renderCharts(currentBatchData);
 }
 
+// ── CHARTS ────────────────────────────────────────────────────────────────────
 function renderCharts(data) {
-    // 1. Scatter Chart (Size vs Color Density)
-    const scatterCtx = document.getElementById("scatterChart").getContext("2d");
-    if (scatterChartInst) scatterChartInst.destroy();
-    
-    const scatterDataPoints = (data.particle_stats || []).map(p => ({
-        x: p.size,
-        y: p.density
-    }));
-
-    scatterChartInst = new Chart(scatterCtx, {
-        type: "scatter",
-        data: {
-            datasets: [{
-                label: "Microplastic Particles",
-                data: scatterDataPoints,
-                backgroundColor: "rgba(0, 212, 255, 0.7)",
-                borderColor: "rgba(0, 212, 255, 1)",
-                pointRadius: 5,
-                pointHoverRadius: 8
-            }]
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: { callbacks: { label: ctx => `Size: ${ctx.parsed.x}px, Density: ${ctx.parsed.y}` } }
-            },
-            scales: {
-                x: { 
-                    title: { display: true, text: 'Shape Size (Pixels)', color: 'rgba(255,255,255,0.6)' },
-                    ticks: { color: "rgba(255,255,255,0.45)" }, 
-                    grid: { color: "rgba(255,255,255,0.05)" }
-                },
-                y: { 
-                    title: { display: true, text: 'Color Density (Intensity)', color: 'rgba(255,255,255,0.6)' },
-                    ticks: { color: "rgba(255,255,255,0.45)" }, 
-                    grid: { color: "rgba(255,255,255,0.05)" } 
-                }
-            }
-        }
-    });
-
-    // 2. Bar Chart (Counts per image)
     const labels = data.filenames.map((f, i) => f ? f.replace(/\.[^.]+$/, "") : `Img ${i+1}`);
+    const counts = data.counts_per_image;
+
     const barCtx = document.getElementById("barChart").getContext("2d");
     if (barChartInst) barChartInst.destroy();
     barChartInst = new Chart(barCtx, {
@@ -418,49 +574,219 @@ function renderCharts(data) {
         data: {
             labels,
             datasets: [{
-                data: data.counts_per_image,
-                backgroundColor: "rgba(0, 212, 255, 0.5)",
+                label: "Particles detected",
+                data: counts,
+                backgroundColor: counts.map(c => {
+                    const ratio = data.max > 0 ? c / data.max : 0;
+                    return `rgba(0, ${Math.round(180 + (1-ratio)*75)}, 255, ${0.55 + ratio*0.4})`;
+                }),
+                borderColor: "rgba(0,212,255,0.6)",
+                borderWidth: 1,
                 borderRadius: 6,
             }]
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: {
+                legend: { display: false },
+                tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} particles` } }
+            },
             scales: {
-                x: { ticks: { color: "rgba(255,255,255,0.45)" }, grid: { display: false } },
+                x: { ticks: { color: "rgba(255,255,255,0.45)", font: { size: 10 } }, grid: { color: "rgba(255,255,255,0.05)" } },
                 y: { ticks: { color: "rgba(255,255,255,0.45)" }, grid: { color: "rgba(255,255,255,0.05)" }, beginAtZero: true }
             }
         }
     });
+
+    // Doughnut: high vs medium vs low
+    const high   = counts.filter(c => c > data.average * 1.3).length;
+    const medium = counts.filter(c => c >= data.average * 0.7 && c <= data.average * 1.3).length;
+    const low    = counts.filter(c => c < data.average * 0.7).length;
+
+    const dCtx = document.getElementById("doughnutChart").getContext("2d");
+    if (doughnutChartInst) doughnutChartInst.destroy();
+    doughnutChartInst = new Chart(dCtx, {
+        type: "doughnut",
+        data: {
+            labels: ["High density", "Medium density", "Low density"],
+            datasets: [{
+                data: [high, medium, low],
+                backgroundColor: ["rgba(0,212,255,0.7)","rgba(0,212,255,0.35)","rgba(0,212,255,0.12)"],
+                borderColor: ["rgba(0,212,255,0.9)","rgba(0,212,255,0.5)","rgba(0,212,255,0.25)"],
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: "right",
+                    labels: { color: "rgba(255,255,255,0.6)", font: { size: 11 }, padding: 16, boxWidth: 12 }
+                }
+            },
+            cutout: "68%",
+        }
+    });
 }
 
-function openLightbox(src) { document.getElementById("lightboxImg").src = src; document.getElementById("lightbox").classList.add("active"); }
+// ── LIGHTBOX ──────────────────────────────────────────────────────────────────
+function openLightbox(src) {
+    document.getElementById("lightboxImg").src = src;
+    document.getElementById("lightbox").classList.add("active");
+}
 function closeLightbox() { document.getElementById("lightbox").classList.remove("active"); }
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeLightbox(); });
 
+// ── FILE INPUT ────────────────────────────────────────────────────────────────
 document.getElementById("fileInput").addEventListener("change", async function () {
     const files = this.files;
     if (!files || files.length === 0) return;
-    document.getElementById("menu").style.display = "none"; menuOpen = false;
-    showLoading();
 
+    if (files.length > 1) {
+        handleMultipleImages(files);
+        this.value = "";
+        return;
+    }
+
+    const file = files[0];
+    document.getElementById("menu").style.display = "none"; menuOpen = false;
+    showLoading(); cycleStatus();
     const formData = new FormData();
-    if (files.length === 1) {
-        formData.append("file", files[0]);
-        try {
-            const res = await fetch(API + "/predict", { method: "POST", body: formData });
-            const data = await res.json();
-            showResult("data:image/jpeg;base64," + data.image, data.count, data.particle_stats);
-        } catch (e) { alert("Detection failed."); hideLoading(); }
-    } else {
-        for (let i = 0; i < files.length; i++) formData.append("files", files[i]);
-        try {
-            const res = await fetch(API + "/predict-multiple", { method: "POST", body: formData });
-            const data = await res.json();
-            showBatchResult(data);
-        } catch (e) { alert("Batch failed."); hideLoading(); }
+    formData.append("file", file, file.name);
+    try {
+        const ready = await waitForServer(45000);
+        if (!ready) { stopStatusCycle(); hideLoading(); alert("Server is taking too long to start. Please try again."); this.value = ""; return; }
+        const response = await fetch(API + "/predict", { method: "POST", body: formData });
+        if (!response.ok) throw new Error("Server error: " + response.status);
+        const data = await response.json();
+        stopStatusCycle();
+        showResult("data:image/jpeg;base64," + data.image, data.count);
+    } catch (error) {
+        stopStatusCycle(); hideLoading();
+        alert("Detection failed: " + error.message);
+        console.error(error);
     }
     this.value = "";
 });
+
+async function handleMultipleImages(files) {
+    showLoading(); cycleStatus();
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) formData.append("files", files[i]);
+
+    try {
+        const ready = await waitForServer(45000);
+        if (!ready) { stopStatusCycle(); hideLoading(); alert("Server is taking too long to start. Please try again."); return; }
+
+        const response = await fetch(API + "/predict-multiple", { method: "POST", body: formData });
+        if (!response.ok) throw new Error("Server error: " + response.status);
+        const data = await response.json();
+        stopStatusCycle();
+        showBatchResult(data);
+    } catch (error) {
+        stopStatusCycle(); hideLoading();
+        alert("Batch detection failed: " + error.message);
+        console.error(error);
+    }
+}
+
+// ── BG PARTICLES ─────────────────────────────────────────────────────────────
+const bgCanvas = document.getElementById("particles");
+const bgCtx = bgCanvas.getContext("2d");
+bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight;
+window.addEventListener("resize", () => { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; });
+
+class BgParticle {
+    constructor() { this.reset(); }
+    reset() {
+        this.x = Math.random() * bgCanvas.width; this.y = Math.random() * bgCanvas.height;
+        this.size = Math.random() * 2.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.6; this.speedY = (Math.random() - 0.5) * 0.6;
+        this.color = ["#00D4FF","#00FFA3","#FF4D6D"][Math.floor(Math.random()*3)];
+    }
+    update() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.x > bgCanvas.width || this.x < 0) this.speedX *= -1;
+        if (this.y > bgCanvas.height || this.y < 0) this.speedY *= -1;
+    }
+    draw() {
+        bgCtx.beginPath(); bgCtx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+        bgCtx.fillStyle = this.color; bgCtx.shadowBlur = 12; bgCtx.shadowColor = "#00D4FF"; bgCtx.fill();
+    }
+}
+const bgParticles = Array.from({length:100}, () => new BgParticle());
+(function animateBg() { bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height); bgParticles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animateBg); })();
+
+// ── 3D SPHERE ─────────────────────────────────────────────────────────────────
+const SC = document.getElementById("sphere");
+const sCtx = SC.getContext("2d");
+const SW = 220, SH = 220, CX = SW/2, CY = SH/2;
+
+function drawCore() {
+    for (let r = 56; r >= 24; r -= 5) {
+        const a = 0.035 + (56-r)*0.008;
+        sCtx.beginPath(); sCtx.arc(CX, CY, r, 0, Math.PI*2);
+        sCtx.fillStyle = "rgba(0,212,255,"+a.toFixed(3)+")"; sCtx.fill();
+    }
+    const g = sCtx.createRadialGradient(CX-7, CY-7, 2, CX, CY, 24);
+    g.addColorStop(0, "rgba(190,245,255,0.98)");
+    g.addColorStop(0.35, "rgba(0,212,255,0.9)");
+    g.addColorStop(1, "rgba(0,70,150,0.35)");
+    sCtx.beginPath(); sCtx.arc(CX, CY, 24, 0, Math.PI*2);
+    sCtx.fillStyle = g; sCtx.fill();
+    sCtx.beginPath(); sCtx.arc(CX-8, CY-8, 7, 0, Math.PI*2);
+    sCtx.fillStyle = "rgba(255,255,255,0.5)"; sCtx.fill();
+}
+
+const orbitDefs = [
+    { rx:80, ry:22, tilt:0,   count:5, speed:0.008,  hue:195 },
+    { rx:70, ry:28, tilt:55,  count:4, speed:-0.006, hue:168 },
+    { rx:84, ry:18, tilt:-38, count:3, speed:0.011,  hue:212 },
+];
+const orbitParts = orbitDefs.map(o => Array.from({length:o.count}, (_,i) => ({ phase:(i/o.count)*Math.PI*2, size:2+Math.random()*2 })));
+
+function drawOrbits(t) {
+    orbitDefs.forEach((o, oi) => {
+        const cT = Math.cos(o.tilt*Math.PI/180), sT = Math.sin(o.tilt*Math.PI/180);
+        orbitParts[oi].forEach(p => {
+            const a = p.phase + t * o.speed * 60;
+            const lx = o.rx*Math.cos(a), ly = o.ry*Math.sin(a);
+            const rx2 = lx*cT - ly*sT, ry2 = lx*sT + ly*cT;
+            const px = CX+rx2, py = CY+ry2;
+            const da = 0.3 + 0.7*((ry2/o.rx)*0.5+0.5);
+            sCtx.beginPath(); sCtx.arc(px, py, p.size, 0, Math.PI*2);
+            sCtx.fillStyle = "hsla("+o.hue+",100%,72%,"+da.toFixed(2)+")";
+            sCtx.shadowBlur = 10; sCtx.shadowColor = "hsl("+o.hue+",100%,72%)"; sCtx.fill(); sCtx.shadowBlur = 0;
+        });
+    });
+}
+
+const strays = Array.from({length:10}, () => ({
+    angle: Math.random()*Math.PI*2, dist: 60+Math.random()*26,
+    drift: (Math.random()-0.5)*0.004, driftD: (Math.random()-0.5)*0.08,
+    size: 1.2+Math.random()*1.4, hue: 185+Math.random()*40, alpha: 0.35+Math.random()*0.4,
+}));
+
+function drawStrays() {
+    strays.forEach(s => {
+        s.angle += s.drift; s.dist += s.driftD;
+        if (s.dist > 96 || s.dist < 54) s.driftD *= -1;
+        const px = CX+s.dist*Math.cos(s.angle), py = CY+s.dist*Math.sin(s.angle);
+        sCtx.beginPath(); sCtx.arc(px, py, s.size, 0, Math.PI*2);
+        sCtx.fillStyle = "hsla("+s.hue+",90%,75%,"+s.alpha+")";
+        sCtx.shadowBlur = 8; sCtx.shadowColor = "hsl("+s.hue+",90%,70%)"; sCtx.fill(); sCtx.shadowBlur = 0;
+    });
+}
+
+let rot = 0;
+(function animateSphere() {
+    rot += 0.01;
+    sCtx.clearRect(0, 0, SW, SH);
+    drawOrbits(rot);
+    drawStrays();
+    drawCore();
+    requestAnimationFrame(animateSphere);
+})();
 </script>
 </body>
 </html>
