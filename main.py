@@ -38,7 +38,7 @@ async def predict(file: UploadFile = File(...)):
     kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
     img = cv2.filter2D(img, -1, kernel)
 
-    results = model(img, conf=0.15, iou=0.5, imgsz=416)
+    results = model(img, conf=0.25, iou=0.5, imgsz=416)
 
     count = len(results[0].boxes) if results[0].boxes is not None else 0
 
@@ -76,7 +76,7 @@ async def predict_image(file: UploadFile = File(...)):
     kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
     img = cv2.filter2D(img, -1, kernel)
 
-    results = model(img, conf=0.15, iou=0.5, imgsz=416)
+    results = model(img, conf=0.25, iou=0.5, imgsz=416)
     annotated = results[0].plot()
     _, buffer = cv2.imencode(".jpg", annotated)
 
@@ -121,7 +121,7 @@ async def predict_multiple(files: list[UploadFile] = File(...)):
         kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
         img = cv2.filter2D(img, -1, kernel)
 
-        results = model(img, conf=0.15, iou=0.5, imgsz=416)
+        results = model(img, conf=0.25, iou=0.5, imgsz=416)
 
         if results[0].boxes is not None:
             count = len(results[0].boxes)
