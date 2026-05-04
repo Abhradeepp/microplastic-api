@@ -24,9 +24,11 @@ app.add_middleware(
 def home():
     return {"message": "YOLO API is running"}
 
+# Changed from 'async def' to 'def'
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)):
-    contents = await file.read()
+def predict(file: UploadFile = File(...)):
+    # Replaced 'await file.read()' with synchronous '.file.read()'
+    contents = file.file.read() 
 
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -49,7 +51,6 @@ async def predict(file: UploadFile = File(...)):
 
     print("🔥 REQUEST RECEIVED")
 
-    # Save raw image
     with open("debug_upload.jpg", "wb") as f:
         f.write(contents)
 
@@ -60,10 +61,10 @@ async def predict(file: UploadFile = File(...)):
         "image": img_base64
     }
 
-
+# Changed from 'async def' to 'def'
 @app.post("/predict-image")
-async def predict_image(file: UploadFile = File(...)):
-    contents = await file.read()
+def predict_image(file: UploadFile = File(...)):
+    contents = file.file.read()
 
     nparr = np.frombuffer(contents, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -86,7 +87,6 @@ def health():
 
 @app.get("/warmup")
 def warmup():
-    """Run a dummy inference to pre-load the YOLO model into memory."""
     try:
         dummy = np.zeros((416, 416, 3), dtype=np.uint8)
         model(dummy, imgsz=416, verbose=False)
@@ -95,17 +95,18 @@ def warmup():
         return {"status": "error", "detail": str(e)}
 
 
-# ── BATCH ENDPOINT (now returns annotated images) ──────────────────────────────
+# Changed from 'async def' to 'def'
 @app.post("/predict-multiple")
-async def predict_multiple(files: list[UploadFile] = File(...)):
+def predict_multiple(files: list[UploadFile] = File(...)):
 
     counts = []
-    images = []          # base64 annotated images — NEW
-    filenames = []       # original filenames  — NEW
+    images = []         
+    filenames = []      
     total = 0
 
     for file in files:
-        contents = await file.read()
+        # Replaced 'await file.read()' with synchronous '.file.read()'
+        contents = file.file.read()
 
         nparr = np.frombuffer(contents, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -122,7 +123,6 @@ async def predict_multiple(files: list[UploadFile] = File(...)):
         counts.append(count)
         total += count
 
-        # Encode annotated image to base64 — NEW
         annotated = results[0].plot()
         _, buffer = cv2.imencode(".jpg", annotated)
         img_b64 = base64.b64encode(buffer).decode("utf-8")
@@ -136,8 +136,8 @@ async def predict_multiple(files: list[UploadFile] = File(...)):
 
     return {
         "counts_per_image": counts,
-        "images": images,            # ← NEW
-        "filenames": filenames,      # ← NEW
+        "images": images,            
+        "filenames": filenames,      
         "total": total,
         "num_images": num_images,
         "average": avg,
