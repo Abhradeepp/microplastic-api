@@ -1,10 +1,11 @@
-
 from fastapi import FastAPI, File, UploadFile
 from ultralytics import YOLO
 import cv2
 import numpy as np
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 import base64
+from typing import List
+
 app = FastAPI()
 
 model = YOLO("best.pt")
@@ -21,7 +22,7 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return {"message" : "YOLO API is running"}
+    return {"message": "YOLO API is running"}
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
@@ -59,9 +60,6 @@ async def predict(file: UploadFile = File(...)):
         "image": img_base64
     }
 
-    
-
-from fastapi.responses import Response
 
 @app.post("/predict-image")
 async def predict_image(file: UploadFile = File(...)):
@@ -88,8 +86,7 @@ def health():
 
 @app.get("/warmup")
 def warmup():
-    """Run a dummy inference to pre-load the YOLO model into memory.
-    Called by the frontend after /health confirms the server is up."""
+    """Run a dummy inference to pre-load the YOLO model into memory."""
     try:
         dummy = np.zeros((416, 416, 3), dtype=np.uint8)
         model(dummy, imgsz=416, verbose=False)
@@ -97,16 +94,14 @@ def warmup():
     except Exception as e:
         return {"status": "error", "detail": str(e)}
 
-#for multiple images 
 
-
-from typing import List
-from fastapi import UploadFile, File
-
+# ── BATCH ENDPOINT (now returns annotated images) ──────────────────────────────
 @app.post("/predict-multiple")
 async def predict_multiple(files: list[UploadFile] = File(...)):
 
     counts = []
+    images = []          # base64 annotated images — NEW
+    filenames = []       # original filenames  — NEW
     total = 0
 
     for file in files:
@@ -123,30 +118,29 @@ async def predict_multiple(files: list[UploadFile] = File(...)):
 
         results = model(img, conf=0.25, iou=0.5, imgsz=416)
 
-        if results[0].boxes is not None:
-            count = len(results[0].boxes)
-        else:
-            count = 0
-
+        count = len(results[0].boxes) if results[0].boxes is not None else 0
         counts.append(count)
         total += count
 
+        # Encode annotated image to base64 — NEW
+        annotated = results[0].plot()
+        _, buffer = cv2.imencode(".jpg", annotated)
+        img_b64 = base64.b64encode(buffer).decode("utf-8")
+        images.append(img_b64)
+        filenames.append(file.filename)
 
-    # 🔥 BASIC STATS
     num_images = len(counts)
-    avg = total / num_images if num_images > 0 else 0
+    avg = round(total / num_images, 2) if num_images > 0 else 0
     max_count = max(counts) if counts else 0
     min_count = min(counts) if counts else 0
 
     return {
         "counts_per_image": counts,
+        "images": images,            # ← NEW
+        "filenames": filenames,      # ← NEW
         "total": total,
         "num_images": num_images,
         "average": avg,
         "max": max_count,
         "min": min_count
     }
-
-    
-
-
