@@ -10,6 +10,20 @@ app = FastAPI()
 
 model = YOLO("best.pt")
 
+# ── Run a real warmup at startup so the model is hot before first request ──────
+import threading
+
+def _warmup_on_start():
+    try:
+        # Use a realistic non-blank image (random noise) for a more effective warmup
+        dummy = np.random.randint(50, 200, (416, 416, 3), dtype=np.uint8)
+        model(dummy, imgsz=416, verbose=False)
+        print("✅ Model warmed up at startup")
+    except Exception as e:
+        print(f"⚠️  Warmup error: {e}")
+
+threading.Thread(target=_warmup_on_start, daemon=True).start()
+
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
@@ -20,59 +34,68 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+# ── Shared preprocessing ───────────────────────────────────────────────────────
+def preprocess(img_bgr: np.ndarray) -> np.ndarray:
+    img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+    img = cv2.convertScaleAbs(img, alpha=1.8, beta=40)
+    kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+    img = cv2.filter2D(img, -1, kernel)
+    return img
+
+def decode_image(contents: bytes) -> np.ndarray:
+    nparr = np.frombuffer(contents, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    if img is None:
+        raise ValueError("Could not decode image")
+    return img
+
+# ── Routes ────────────────────────────────────────────────────────────────────
+
+@app.api_route("/", methods=["GET", "HEAD"])
 def home():
     return {"message": "YOLO API is running"}
+
+@app.api_route("/health", methods=["GET", "HEAD"])
+def health():
+    return {"status": "ready"}
+
+@app.get("/warmup")
+def warmup():
+    """
+    Explicit warmup endpoint — uses random-noise image (not blank zeros)
+    so the model processes a realistic input and fully warms up.
+    """
+    try:
+        dummy = np.random.randint(50, 200, (416, 416, 3), dtype=np.uint8)
+        model(dummy, imgsz=416, verbose=False)
+        return {"status": "warmed_up"}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
+
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     contents = await file.read()
+    print(f"🔥 /predict received — file size: {len(contents)} bytes")
 
-    nparr = np.frombuffer(contents, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-    print("preprocessing received")
-
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = cv2.convertScaleAbs(img, alpha=1.8, beta=40)
-
-    kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
-    img = cv2.filter2D(img, -1, kernel)
+    img = decode_image(contents)
+    img = preprocess(img)
 
     results = model(img, conf=0.25, iou=0.5, imgsz=416)
-
     count = len(results[0].boxes) if results[0].boxes is not None else 0
 
     annotated = results[0].plot()
     _, buffer = cv2.imencode(".jpg", annotated)
     img_base64 = base64.b64encode(buffer).decode("utf-8")
 
-    print("🔥 REQUEST RECEIVED")
-
-    # Save raw image
-    with open("debug_upload.jpg", "wb") as f:
-        f.write(contents)
-
-    print("🔥 FILE SIZE:", len(contents))
-
-    return {
-        "count": count,
-        "image": img_base64
-    }
+    return {"count": count, "image": img_base64}
 
 
 @app.post("/predict-image")
 async def predict_image(file: UploadFile = File(...)):
     contents = await file.read()
-
-    nparr = np.frombuffer(contents, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = cv2.convertScaleAbs(img, alpha=1.8, beta=40)
-
-    kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
-    img = cv2.filter2D(img, -1, kernel)
+    img = decode_image(contents)
+    img = preprocess(img)
 
     results = model(img, conf=0.25, iou=0.5, imgsz=416)
     annotated = results[0].plot()
@@ -80,41 +103,18 @@ async def predict_image(file: UploadFile = File(...)):
 
     return Response(content=buffer.tobytes(), media_type="image/jpeg")
 
-@app.get("/health")
-def health():
-    return {"status": "ready"}
 
-@app.get("/warmup")
-def warmup():
-    """Run a dummy inference to pre-load the YOLO model into memory."""
-    try:
-        dummy = np.zeros((416, 416, 3), dtype=np.uint8)
-        model(dummy, imgsz=416, verbose=False)
-        return {"status": "warmed_up"}
-    except Exception as e:
-        return {"status": "error", "detail": str(e)}
-
-
-# ── BATCH ENDPOINT (now returns annotated images) ──────────────────────────────
 @app.post("/predict-multiple")
 async def predict_multiple(files: list[UploadFile] = File(...)):
-
     counts = []
-    images = []          # base64 annotated images — NEW
-    filenames = []       # original filenames  — NEW
+    images = []
+    filenames = []
     total = 0
 
     for file in files:
         contents = await file.read()
-
-        nparr = np.frombuffer(contents, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.convertScaleAbs(img, alpha=1.8, beta=40)
-
-        kernel = np.array([[0,-1,0],[-1,5,-1],[0,-1,0]])
-        img = cv2.filter2D(img, -1, kernel)
+        img = decode_image(contents)
+        img = preprocess(img)
 
         results = model(img, conf=0.25, iou=0.5, imgsz=416)
 
@@ -122,7 +122,6 @@ async def predict_multiple(files: list[UploadFile] = File(...)):
         counts.append(count)
         total += count
 
-        # Encode annotated image to base64 — NEW
         annotated = results[0].plot()
         _, buffer = cv2.imencode(".jpg", annotated)
         img_b64 = base64.b64encode(buffer).decode("utf-8")
@@ -131,16 +130,14 @@ async def predict_multiple(files: list[UploadFile] = File(...)):
 
     num_images = len(counts)
     avg = round(total / num_images, 2) if num_images > 0 else 0
-    max_count = max(counts) if counts else 0
-    min_count = min(counts) if counts else 0
 
     return {
         "counts_per_image": counts,
-        "images": images,            # ← NEW
-        "filenames": filenames,      # ← NEW
+        "images": images,
+        "filenames": filenames,
         "total": total,
         "num_images": num_images,
         "average": avg,
-        "max": max_count,
-        "min": min_count
+        "max": max(counts) if counts else 0,
+        "min": min(counts) if counts else 0,
     }
